@@ -165,6 +165,13 @@ const Index = () => {
     };
     setTimelineClips(prev => [...prev, newClip]);
     setDuration(Math.max(duration, newClip.endTime));
+    setSelectedClip(newClip.id);
+    
+    if (media.type === 'video' && videoRef.current) {
+      videoRef.current.src = media.url;
+      videoRef.current.load();
+    }
+    
     toast({ title: "Добавлено на таймлайн", description: media.name });
   };
 
@@ -413,7 +420,7 @@ const Index = () => {
             <div ref={previewRef} className="flex-1 flex items-center justify-center bg-black rounded-lg relative overflow-hidden" onMouseMove={handleMouseMove} onMouseUp={() => setIsDragging(false)}>
               {timelineClips.length > 0 ? (
                 <>
-                  <video ref={videoRef} className="max-w-full max-h-full" onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)} onLoadedMetadata={(e) => setDuration(Math.max(duration, e.currentTarget.duration))} />
+                  <video ref={videoRef} className="max-w-full max-h-full" controls onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)} onLoadedMetadata={(e) => setDuration(Math.max(duration, e.currentTarget.duration))} />
                   {overlayElements.filter(o => currentTime >= o.startTime && currentTime <= o.endTime).map((overlay) => (
                     <div key={overlay.id} className={`absolute cursor-move ${selectedOverlay === overlay.id ? 'ring-2 ring-primary' : ''}`}
                       style={{ left: overlay.x, top: overlay.y, width: overlay.width, height: overlay.height }}
